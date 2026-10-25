@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCM Lite - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;min-height:100vh;display:flex;background:#fff}
+.left{width:55%;background:linear-gradient(135deg,#0f172a,#1e3a8a 50%,#2563eb);position:relative;display:flex;flex-direction:column;justify-content:center;padding:60px;color:#fff;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(50px)}.b1{width:500px;height:500px;background:#3b82f6;top:-150px;left:-150px;opacity:0.5}.b2{width:700px;height:700px;background:#60a5fa;bottom:-200px;right:-200px;opacity:0.3}
+.content{position:relative;z-index:2}.badge{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700}
+.left h1{font-size:52px;font-weight:900;line-height:0.9;margin:20px 0 0}.left p{margin-top:14px;color:#cbd5e1;font-size:14px;max-width:400px}
+.feats{margin-top:30px;display:flex;flex-direction:column;gap:10px}.feat{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);padding:12px 16px;border-radius:12px;max-width:360px}.feat .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}.feat .ic img{width:100%;height:100%;object-fit:cover}
+.right{width:45%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:#f8fafc;overflow:auto}
+.logo{text-align:center}.logo-icon{width:56px;height:56px;background:#1e3a8a;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto;color:#fff;font-weight:900;font-size:24px}
+.logo h2{font-size:26px;font-weight:800;margin:12px 0 0}.logo .sub{letter-spacing:4px;color:#64748b;font-size:11px;font-weight:700;margin-top:6px}
+.tabs{display:flex;background:#e2e8f0;border-radius:12px;padding:4px;gap:4px;width:380px;max-width:100%;margin:20px 0 0}.tabs button{flex:1;padding:10px;border:0;border-radius:8px;background:transparent;cursor:pointer;font-weight:700;font-size:14px;color:#64748b}.tabs button.active{background:#fff;color:#0f172a;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.card{width:380px;max-width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;margin-top:16px}.card h3{margin:0 0 4px;font-size:18px;font-weight:800}.card .desc{font-size:13px;color:#64748b;margin-bottom:16px}
+label{font-size:13px;font-weight:600;display:block;margin-top:12px;margin-bottom:6px;color:#334155}
+input,select{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:12px;background:#f8fafc;font-size:14px;outline:none}
+input:focus,select:focus{border-color:#2563eb;background:#fff}
+.btn{width:100%;background:#1e3a8a;color:#fff;border:0;padding:13px;border-radius:12px;font-weight:700;cursor:pointer;margin-top:18px}.btn:disabled{background:#94a3b8;cursor:not-allowed}
+.quick{width:380px;max-width:100%;display:flex;gap:12px;margin-top:18px;justify-content:center}
+.quick .q{flex:1;background:#fff;border:2px solid #e2e8f0;border-radius:16px;padding:12px 8px;text-align:center;cursor:pointer;transition:0.2s}
+.quick .q.active{border-color:#2563eb;background:#eff6ff;transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,0.15)}
+.quick .q .c{width:56px;height:56px;border-radius:50%;background:#f1f5f9;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.quick .q .c img{width:100%;height:100%;object-fit:cover}
+.quick .q b{font-size:12px}
+#msg,#msg2{margin-top:10px;text-align:center;font-size:13px;min-height:18px}
+.lock{font-size:12px;color:#ef4444;background:#fef2f2;border:1px solid #fecaca;padding:8px 12px;border-radius:10px;text-align:center;margin-top:10px}
+@media(max-width:900px){.left{display:none}.right{width:100%;min-height:100vh}}
+</style>
+</head>
+<body>
+
+<div class="left">
+<div class="blob b1"></div><div class="blob b2"></div>
+<div class="content">
+<div class="badge">HACKATHON 2026</div>
+<h1>Your HR System<br>HCM Lite</h1>
+<p>Admin ka login to Admin ki pic, HR ka to HR ki pic, Employee ka to Employee ki pic panel me ayegi.</p>
+<div class="feats">
+<div class="feat"><div class="ic"><img src="https://i.pravatar.cc/100?img=8"></div><div><b>Admin</b><br><small>admin@test.com</small></div></div>
+<div class="feat"><div class="ic"><img src="https://i.pravatar.cc/100?img=12"></div><div><b>HR</b><br><small>hr@test.com</small></div></div>
+<div class="feat"><div class="ic"><img src="https://i.pravatar.cc/100?img=32"></div><div><b>Employee</b><br><small>employee@test.com</small></div></div>
+</div>
+</div>
+</div>
+
+<div class="right">
+<div class="logo"><div class="logo-icon">H</div><h2>HCM Lite</h2><div class="sub">YOUR WEBSITE</div></div>
+
+<div class="tabs">
+<button id="tabLogin" class="active">Login</button>
+<button id="tabSignup">Signup</button>
+</div>
+
+<div class="card" id="loginCard">
+<h3>Login</h3><div class="desc" id="loginDesc"></div>
+<label>Email *</label><input id="email" type="email" placeholder="email likho">
+<label>Password *</label><input id="password" type="password" placeholder="password likho">
+<button class="btn" id="loginBtn">LOGIN</button>
+<div id="loginLock" class="lock" style="display:none">🔒 Pehle Signup karo</div>
+<div id="msg"></div>
+</div>
+
+<div class="card" id="signupCard" style="display:none">
+<h3>Signup</h3><div class="desc">Neeche tasveer pe click karo - jis pe click karoge usi ka Role set hoga, data khud likhna padega</div>
+<label>Full Name *</label><input id="sName" type="text" placeholder="Muaaz Kamal">
+<label>Email *</label><input id="sEmail" type="email" placeholder="hr@test.com">
+<label>Role *</label><select id="sRole"><option value="admin">Admin</option><option value="hr" selected>HR</option><option value="employee">Employee</option></select>
+<label>Password *</label><input id="sPass" type="password" placeholder="123456">
+<label>Confirm Password *</label><input id="sCPass" type="password" placeholder="123456">
+<button class="btn" id="signupBtn">SIGNUP</button><div id="msg2"></div>
+</div>
+
+<div class="quick">
+<div class="q" data-role="admin" data-img="https://i.pravatar.cc/100?img=8"><div class="c"><img src="https://i.pravatar.cc/100?img=8"></div><b>Admin</b></div>
+<div class="q active" data-role="hr" data-img="https://i.pravatar.cc/100?img=12"><div class="c"><img src="https://i.pravatar.cc/100?img=12"></div><b>HR</b></div>
+<div class="q" data-role="employee" data-img="https://i.pravatar.cc/100?img=32"><div class="c"><img src="https://i.pravatar.cc/100?img=32"></div><b>Employee</b></div>
+</div>
+<p style="font-size:11px;color:#64748b;margin-top:8px;text-align:center">Neeche jis pe click karoge usi ka Role set hoga, data khud likhna padega</p>
+</div>
+
+<script>
+var USERS_KEY='hcm_lite_users'; var SIGNUP_KEY='hcm_signup_done';
+function getUsers(){ var d=localStorage.getItem(USERS_KEY); if(!d){ var def=[{name:'Admin',email:'admin@test.com',password:'123456',role:'admin',img:'https://i.pravatar.cc/100?img=8'},{name:'HR',email:'hr@test.com',password:'123456',role:'hr',img:'https://i.pravatar.cc/100?img=12'},{name:'Employee',email:'employee@test.com',password:'123456',role:'employee',img:'https://i.pravatar.cc/100?img=32'}]; localStorage.setItem(USERS_KEY,JSON.stringify(def)); return def; } return JSON.parse(d); }
+function saveUser(u){ var users=getUsers(); var ex=users.find(x=>x.email===u.email); if(ex){ ex.name=u.name; ex.password=u.password; ex.role=u.role; ex.img=u.img; } else users.push(u); localStorage.setItem(USERS_KEY,JSON.stringify(users)); }
+function findUser(e,p){ return getUsers().find(u=>u.email.toLowerCase()===e.toLowerCase() && u.password===p); }
+
+var tabLogin=document.getElementById('tabLogin'); var tabSignup=document.getElementById('tabSignup');
+var loginCard=document.getElementById('loginCard'); var signupCard=document.getElementById('signupCard');
+var loginBtn=document.getElementById('loginBtn'); var loginLock=document.getElementById('loginLock'); var loginDesc=document.getElementById('loginDesc');
+function checkSignupDone(){ var done=localStorage.getItem(SIGNUP_KEY); if(done==='true'){ loginBtn.disabled=false; loginLock.style.display='none'; loginDesc.textContent='Email/Password dalo - jis role se signup kiya usi ka panel aur usi ki pic ayegi.'; } else { loginBtn.disabled=true; loginLock.style.display='block'; loginDesc.textContent='🔒 Pehle Signup karna zaroori hai.'; } }
+function switchTab(t){ if(t==='login'){ tabLogin.className='active'; tabSignup.className=''; loginCard.style.display='block'; signupCard.style.display='none'; checkSignupDone(); } else { tabSignup.className='active'; tabLogin.className=''; signupCard.style.display='block'; loginCard.style.display='none'; } }
+tabLogin.onclick=function(){ switchTab('login'); }; tabSignup.onclick=function(){ switchTab('signup'); };
+switchTab('signup'); checkSignupDone(); getUsers();
+
+var qs=document.querySelectorAll('.q');
+for(var i=0;i<qs.length;i++){ 
+  qs[i].onclick=(function(el){ 
+    return function(){ 
+      for(var j=0;j<qs.length;j++){ qs[j].className='q'; } 
+      el.className='q active'; 
+      var role = el.getAttribute('data-role');
+      document.getElementById('sRole').value = role;
+      document.getElementById('sName').value = '';
+      document.getElementById('sEmail').value = '';
+      document.getElementById('sPass').value = '';
+      document.getElementById('sCPass').value = '';
+      document.getElementById('sEmail').placeholder = role+'@test.com';
+      document.getElementById('msg2').textContent='';
+      document.getElementById('msg2').style.color='';
+    }; 
+  })(qs[i]); 
+}
+
+document.getElementById('signupBtn').onclick=function(){
+  var name=document.getElementById('sName').value.trim(); 
+  var email=document.getElementById('sEmail').value.trim(); 
+  var role=document.getElementById('sRole').value; 
+  var pass=document.getElementById('sPass').value; 
+  var cpass=document.getElementById('sCPass').value; 
+  var m2=document.getElementById('msg2');
+  
+  var activeQ = document.querySelector('.q.active');
+  var imageRole = activeQ ? activeQ.getAttribute('data-role') : '';
+  
+  if(role !== imageRole){
+    m2.style.color='red'; 
+    m2.textContent='❌ Role me '+role.toUpperCase()+' hai lekin neeche '+imageRole.toUpperCase()+' select hai - neeche '+role.toUpperCase()+' pe click karo tabhi success hoga';
+    return;
+  }
+  
+  if(!name||!email||!pass||!cpass){ 
+    m2.style.color='red'; 
+    var miss = [];
+    if(!name) miss.push('Name');
+    if(!email) miss.push('Email');
+    if(!pass) miss.push('Password');
+    if(!cpass) miss.push('Confirm');
+    m2.textContent='❌ '+miss.join(', ')+' khali hai'; 
+    return; 
+  }
+  if(pass!==cpass){ 
+    m2.style.color='red'; 
+    m2.textContent='❌ Password aur Confirm same nahi - dono me '+pass.length+' aur '+cpass.length+' letter hai'; 
+    return; 
+  }
+  var img = role==='admin' ? 'https://i.pravatar.cc/100?img=8' : role==='hr' ? 'https://i.pravatar.cc/100?img=12' : 'https://i.pravatar.cc/100?img=32';
+  saveUser({name:name,email:email,password:pass,role:role,img:img});
+  localStorage.setItem(SIGNUP_KEY,'true');
+  localStorage.setItem('hcm_current_user', JSON.stringify({name:name,email:email,role:role,img:img}));
+  m2.style.color='green'; m2.textContent='✓ Success! Role aur tasveer dono '+role.toUpperCase()+' - match ho gaya!';
+  setTimeout(function(){ document.getElementById('email').value=email; document.getElementById('password').value=pass; switchTab('login'); document.getElementById('msg').style.color='green'; document.getElementById('msg').textContent='Signup ho gaya! Ab LOGIN dabao - '+role.toUpperCase()+' panel khulega'; },1000);
+};
+
+document.getElementById('loginBtn').onclick=function(){
+  if(localStorage.getItem(SIGNUP_KEY)!=='true'){ document.getElementById('msg').style.color='red'; document.getElementById('msg').textContent='Pehle Signup karo!'; switchTab('signup'); return; }
+  var email=document.getElementById('email').value.trim(); var password=document.getElementById('password').value; var msg=document.getElementById('msg');
+  msg.style.color='#64748b'; msg.textContent='Checking...';
+  var user=findUser(email,password);
+  if(user){
+    msg.style.color='green'; msg.textContent='✓ '+user.role.toUpperCase()+' panel khul raha hai...';
+    localStorage.setItem('hcm_current_user', JSON.stringify(user));
+    setTimeout(function(){ if(user.role==='admin') location.href='admin.html'; else if(user.role==='hr') location.href='hr.html'; else location.href='employee.html'; },700);
+  } else { msg.style.color='red'; msg.textContent='Galat email/password'; }
+};
+</script>
+</body>
+</html>

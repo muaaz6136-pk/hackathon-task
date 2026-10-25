@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Panel - HCM Lite</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"@supabase/supabase-js":"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"}}</script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:#f8fafc;display:flex}
+.sidebar{width:260px;background:#0f172a;color:#fff;min-height:100vh;padding:20px;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:10;overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-bottom:10px}
+.logo-icon{width:36px;height:36px;background:#16a34a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900}
+.nav{display:flex;flex-direction:column;gap:6px;flex:1}
+.nav button{width:100%;text-align:left;padding:11px 13px;border:0;border-radius:10px;background:transparent;color:#94a3b8;cursor:pointer;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:10px;transition:0.2s}
+.nav button.active{background:#1e293b;color:#fff;border-left:3px solid #16a34a}
+.nav button:hover{background:#1e293b;color:#fff}
+.content{margin-left:260px;flex:1;padding:28px;min-height:100vh}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px}
+.stat h3{margin:0;font-size:12px;color:#64748b;text-transform:uppercase}.stat .num{font-size:22px;font-weight:800;margin-top:6px}
+.tab{display:none}.tab.active{display:block}
+input,select,textarea{padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;background:#f8fafc;outline:none;width:100%;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:#16a34a;background:#fff}
+.btn{padding:10px 16px;border:0;border-radius:10px;background:#16a34a;color:#fff;font-weight:700;cursor:pointer}.btn-sm{padding:6px 10px;font-size:12px}.btn-red{background:#dc2626}
+.badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}.badge-active{background:#dcfce7;color:#166534}.badge-pending{background:#fef3c7;color:#92400e}.badge-present{background:#dbeafe;color:#1e40af}.badge-approved{background:#dcfce7;color:#166534}
+@media(max-width:900px){.sidebar{width:100%;position:relative;min-height:auto}.content{margin-left:0}.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+<div class="logo"><div class="logo-icon">E</div> HCM Lite - EMPLOYEE</div>
+
+<div style="text-align:center;margin:10px 0 20px 0">
+<div style="width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto;border:3px solid #16a34a;box-shadow:0 4px 12px rgba(0,0,0,0.2)">
+<img id="empAvatar" src="https://i.pravatar.cc/100?img=32" style="width:100%;height:100%;object-fit:cover">
+</div>
+<div id="empName" style="margin-top:8px;font-size:14px;font-weight:700;color:#fff">Employee</div>
+<div style="font-size:11px;color:#94a3b8">Employee Panel</div>
+</div>
+
+<div class="nav">
+<button data-tab="dashboard" class="active">📊 Dashboard</button>
+<button data-tab="profile">👤 My Profile</button>
+<button data-tab="attendance">📅 My Attendance</button>
+<button data-tab="leaves">🌴 My Leaves</button>
+<button data-tab="apply">📝 Apply Leave</button>
+<button data-tab="addinfo">➕ Add Info</button>
+<button data-tab="ai">🤖 AI Assistant</button>
+<button id="logoutBtn" style="margin-top:auto;color:#f87171">🚪 Logout</button>
+</div>
+</div>
+
+<div class="content">
+<div class="header">
+<div>
+<h2 id="pageTitle" style="margin:0">Dashboard</h2>
+<div id="topEmpName" style="font-size:13px;color:#16a34a;font-weight:700;margin-top:4px">Employee</div>
+</div>
+<div id="userInfo" style="font-size:12px;color:#64748b;background:#fff;padding:6px 12px;border-radius:20px;border:1px solid #e2e8f0"></div>
+</div>
+
+<div id="tab-dashboard" class="tab active">
+<div class="stats">
+<div class="stat"><h3>Present Days</h3><div class="num" id="presentDays">18</div></div>
+<div class="stat"><h3>Absent Days</h3><div class="num" id="absentDays">2</div></div>
+<div class="stat"><h3>Pending Leaves</h3><div class="num" id="pendingLeaves">1</div></div>
+</div>
+<div class="card"><h3 id="welcomeTitle">Welcome Employee! 👋</h3><div id="welcomeBox"></div></div>
+</div>
+
+<div id="tab-profile" class="tab">
+<div class="card">
+<h3>👤 My Profile - Naam Change Kar Sakte Ho</h3>
+<p style="font-size:13px;color:#64748b">Apna naam change karo aur Save dabao - khud upar ka naam change ho jayega side me bhi</p>
+<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div><label>Full Name *</label><input id="pName" placeholder="Muaaz Kamal"></div>
+<div><label>Email *</label><input id="pEmail" placeholder="employee@test.com"></div>
+<div><label>Role</label><input id="pRole" readonly style="background:#f1f5f9"></div>
+<div><label>Department</label><select id="pDept"><option>IT</option><option>HR</option><option>Finance</option><option>Marketing</option></select></div>
+<div><label>Phone</label><input id="pPhone" placeholder="0300-1234567"></div>
+<div><label>Employee ID</label><input id="pId" readonly style="background:#f1f5f9"></div>
+</div>
+<button class="btn" style="margin-top:16px" id="saveProfileBtn">💾 Save Profile - Upar Ka Naam Change Hojayega</button>
+<div id="profileMsg" style="margin-top:10px;font-size:13px"></div>
+</div>
+</div>
+
+<div id="tab-attendance" class="tab"><div class="card"><h3>📅 My Attendance</h3><div style="margin:12px 0;display:flex;gap:8px"><input type="month" id="attMonth"> <button class="btn" id="loadAtt">Load</button> <button class="btn" id="markToday">Mark Present</button></div><div id="attList"></div></div></div>
+<div id="tab-leaves" class="tab"><div class="card"><h3>🌴 My Leaves</h3><div id="myLeaves"></div></div></div>
+<div id="tab-apply" class="tab"><div class="card"><h3>📝 Apply Leave</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px"><div><label>Leave Type</label><select id="leaveType"><option>Sick</option><option>Casual</option><option>Annual</option></select></div><div><label>Days</label><input id="leaveDays" type="number" value="1"></div><div><label>Start</label><input id="startDate" type="date"></div><div><label>End</label><input id="endDate" type="date"></div></div><label style="margin-top:12px;display:block">Reason</label><textarea id="leaveReason" rows="3"></textarea><button class="btn" style="margin-top:12px" id="applyLeaveBtn">Apply</button><div id="applyMsg" style="margin-top:10px;font-size:13px"></div></div></div>
+<div id="tab-addinfo" class="tab"><div class="card"><h3>➕ Add Info</h3><div style="display:flex;gap:8px;margin:14px 0;flex-wrap:wrap"><select id="infoType" style="width:120px"><option value="skill">Skill</option><option value="certificate">Certificate</option><option value="note">Note</option></select><input id="infoTitle" placeholder="Title" style="flex:1"><input id="infoDesc" placeholder="Desc" style="flex:1"><button class="btn" id="addInfoBtn">+ Add</button></div><div id="infoList"></div></div></div>
+<div id="tab-ai" class="tab"><div class="card"><h3>🤖 AI Assistant</h3><div id="aiChat" style="height:300px;overflow:auto;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:12px 0;background:#f8fafc"></div><div style="display:flex;gap:8px"><input id="aiInput" style="flex:1" placeholder="Ask..."><button class="btn" id="aiSend">Send</button></div></div></div>
+
+</div>
+
+<script type="module">
+import { createClient } from '@supabase/supabase-js';
+const supabase = createClient('https://jzwgaebssxvqiebbcjju.supabase.co','ANON_KEY_HERE');
+
+function getCur(){ return JSON.parse(localStorage.getItem('hcm_current_user')||'{}'); }
+function getAtt(){ return JSON.parse(localStorage.getItem('hcm_attendance')||'[]'); }
+function saveAtt(a){ localStorage.setItem('hcm_attendance',JSON.stringify(a)); }
+function getLeaves(){ let l=JSON.parse(localStorage.getItem('hcm_leaves')||'[]'); if(l.length===0){ l=[{id:'1',employee_name:getCur().name||'Employee',leave_type:'Sick',start_date:'2026-10-20',end_date:'2026-10-21',reason:'Fever',status:'pending'}]; localStorage.setItem('hcm_leaves',JSON.stringify(l)); } return l; }
+function getInfos(){ return JSON.parse(localStorage.getItem('hcm_emp_infos')||'[]'); }
+
+const tabs=document.querySelectorAll('.nav button[data-tab]');
+const contents=document.querySelectorAll('.tab');
+const title=document.getElementById('pageTitle');
+
+function openTab(name){
+  tabs.forEach(b=>b.classList.remove('active'));
+  contents.forEach(c=>c.classList.remove('active'));
+  document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+  document.getElementById(`tab-${name}`).classList.add('active');
+  title.textContent=name.charAt(0).toUpperCase()+name.slice(1);
+  if(name==='dashboard') loadDash();
+  if(name==='profile') loadProfile();
+  if(name==='attendance') loadAtt();
+  if(name==='leaves') loadMyLeaves();
+  if(name==='addinfo') loadInfos();
+}
+tabs.forEach(b=>{ b.addEventListener('click', function(){ openTab(this.getAttribute('data-tab')); }); });
+
+document.getElementById('logoutBtn').addEventListener('click', async function(){
+  if(confirm('Logout?')){
+    try{ await supabase.auth.signOut(); }catch(e){}
+    localStorage.removeItem('hcm_current_user'); localStorage.removeItem('hcm_signup_done');
+    window.location.href='login.html';
+  }
+});
+
+function loadDash(){
+  var cur=getCur();
+  var att=getAtt().filter(a=>a.employee_id===cur.email);
+  var leaves=getLeaves();
+  document.getElementById('presentDays').textContent=att.filter(a=>a.status==='present').length || 18;
+  document.getElementById('absentDays').textContent=att.filter(a=>a.status==='absent').length || 2;
+  document.getElementById('pendingLeaves').textContent=leaves.filter(l=>l.status==='pending').length || 1;
+  document.getElementById('welcomeBox').innerHTML=`<div style="margin-top:12px;padding:12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px"><b>Name:</b> ${cur.name||'Employee'}<br><b>Email:</b> ${cur.email||''}<br><b>Department:</b> ${cur.department||'IT'}</div>`;
+  document.getElementById('welcomeTitle').textContent=`Welcome ${cur.name||'Employee'}! 👋`;
+  document.getElementById('topEmpName').textContent=cur.name||'Employee';
+}
+
+function loadProfile(){
+  var cur=getCur();
+  document.getElementById('pName').value=cur.name||'Employee';
+  document.getElementById('pEmail').value=cur.email||'employee@test.com';
+  document.getElementById('pRole').value=cur.role||'employee';
+  document.getElementById('pId').value=cur.email||'EMP001';
+  document.getElementById('pDept').value=cur.department||'IT';
+  document.getElementById('pPhone').value=cur.phone||'';
+}
+
+// SAVE - NAAM KHUD UPAR CHANGE HOJAYEGA
+document.getElementById('saveProfileBtn').addEventListener('click', function(){
+  var newName=document.getElementById('pName').value.trim();
+  var newEmail=document.getElementById('pEmail').value.trim();
+  var newDept=document.getElementById('pDept').value;
+  var newPhone=document.getElementById('pPhone').value.trim();
+  var msg=document.getElementById('profileMsg');
+  if(!newName || !newEmail){ msg.style.color='red'; msg.textContent='Name aur Email zaroori'; return; }
+  
+  var cur=getCur();
+  cur.name=newName;
+  cur.email=newEmail;
+  cur.department=newDept;
+  cur.phone=newPhone;
+  
+  localStorage.setItem('hcm_current_user', JSON.stringify(cur));
+  
+  var users=JSON.parse(localStorage.getItem('hcm_lite_users')||'[]');
+  var idx=users.findIndex(u=>u.email===cur.email || u.role==='employee');
+  if(idx>=0){ users[idx].name=newName; users[idx].email=newEmail; }
+  localStorage.setItem('hcm_lite_users', JSON.stringify(users));
+  
+  // UPAR KA NAAM KHUD CHANGE HOJAYEGA - YAHI MAIN HAI
+  document.getElementById('empName').textContent=newName;
+  document.getElementById('topEmpName').textContent=newName;
+  document.getElementById('welcomeTitle').textContent=`Welcome ${newName}! 👋`;
+  document.getElementById('userInfo').innerHTML=`<div style="display:flex;align-items:center;gap:8px"><img src="https://i.pravatar.cc/100?img=32" style="width:32px;height:32px;border-radius:50%;border:2px solid #16a34a"><span>${newEmail} (EMPLOYEE)</span></div>`;
+  document.getElementById('welcomeBox').innerHTML=`<div style="margin-top:12px;padding:12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px"><b>Name:</b> ${newName}<br><b>Email:</b> ${newEmail}<br><b>Department:</b> ${newDept}</div>`;
+  
+  msg.style.color='green';
+  msg.textContent='✓ Saved! Naam change ho gaya - Upar dekho '+newName+' ho gaya';
+  setTimeout(()=>{ msg.textContent=''; },3000);
+});
+
+function loadAtt(){ var cur=getCur(); var att=getAtt(); var month=document.getElementById('attMonth').value; var filtered=month?att.filter(a=>a.date.startsWith(month)):att.slice(-10); if(filtered.length===0){ var today=new Date().toISOString().split('T')[0]; filtered=[{date:today,status:'present',employee_id:cur.email}]; } document.getElementById('attList').innerHTML=filtered.map(a=>`<div style="padding:10px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;display:flex;justify-content:space-between"><span>${a.date}</span><span class="badge ${a.status==='present'?'badge-present':'badge-pending'}">${a.status.toUpperCase()}</span></div>`).join(''); }
+function loadMyLeaves(){ var leaves=getLeaves(); document.getElementById('myLeaves').innerHTML=leaves.map(l=>`<div style="padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between"><div><b>${l.leave_type}</b> - ${l.start_date} to ${l.end_date}<br><small>${l.reason}</small></div><span class="badge ${l.status==='approved'?'badge-approved':'badge-pending'}">${l.status}</span></div>`).join(''); }
+function loadInfos(){ var infos=getInfos(); document.getElementById('infoList').innerHTML = infos.length ? infos.map(i=>`<div style="padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between"><div><span style="background:#f1f5f9;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700">${i.type.toUpperCase()}</span> <b style="margin-left:6px">${i.title}</b><br><small>${i.desc}</small></div><button class="btn btn-sm btn-red" onclick="delInfo('${i.id}')">Del</button></div>`).join('') : 'No info - Add karo'; }
+window.delInfo=function(id){ var infos=getInfos().filter(x=>x.id!==id); localStorage.setItem('hcm_emp_infos',JSON.stringify(infos)); loadInfos(); }
+document.getElementById('loadAtt').addEventListener('click', loadAtt);
+document.getElementById('markToday').addEventListener('click', function(){ var cur=getCur(); var today=new Date().toISOString().split('T')[0]; var att=getAtt(); var idx=att.findIndex(a=>a.date===today && a.employee_id===cur.email); if(idx>=0) att[idx].status='present'; else att.push({date:today,status:'present',employee_id:cur.email}); saveAtt(att); alert('Present!'); loadAtt(); loadDash(); });
+document.getElementById('applyLeaveBtn').addEventListener('click', function(){ var type=document.getElementById('leaveType').value; var start=document.getElementById('startDate').value; var end=document.getElementById('endDate').value; var reason=document.getElementById('leaveReason').value; if(!start||!end||!reason){ document.getElementById('applyMsg').textContent='All required'; return; } var leaves=getLeaves(); leaves.push({id:Date.now().toString(),employee_name:getCur().name||'Employee',employee_id:getCur().email,leave_type:type,start_date:start,end_date:end,reason:reason,status:'pending'}); localStorage.setItem('hcm_leaves',JSON.stringify(leaves)); document.getElementById('applyMsg').textContent='✓ Applied!'; document.getElementById('leaveReason').value=''; loadMyLeaves(); loadDash(); });
+document.getElementById('addInfoBtn').addEventListener('click', function(){ var type=document.getElementById('infoType').value; var title=document.getElementById('infoTitle').value.trim(); var desc=document.getElementById('infoDesc').value.trim(); if(!title){ alert('Title'); return; } var infos=getInfos(); infos.push({id:Date.now().toString(), type:type, title:title, desc:desc||'', date:new Date().toISOString().split('T')[0]}); localStorage.setItem('hcm_emp_infos',JSON.stringify(infos)); document.getElementById('infoTitle').value=''; document.getElementById('infoDesc').value=''; loadInfos(); });
+document.getElementById('aiSend').addEventListener('click', function(){ var q=document.getElementById('aiInput').value; if(!q)return; var chat=document.getElementById('aiChat'); chat.innerHTML+=`<div style="text-align:right;margin:6px 0"><span style="background:#16a34a;color:#fff;padding:8px 12px;border-radius:12px;display:inline-block">${q}</span></div>`; document.getElementById('aiInput').value=''; var ans=`Your data: ${getAtt().length} attendance`; setTimeout(()=>{ chat.innerHTML+=`<div style="margin:6px 0"><span style="background:#fff;border:1px solid #e2e8f0;padding:8px 12px;border-radius:12px;display:inline-block"><b>AI:</b> ${ans}</span></div>`; chat.scrollTop=chat.scrollHeight; },400); });
+
+// INIT - EMPLOYEE KI PIC + NAAM UPAR
+var cur=JSON.parse(localStorage.getItem('hcm_current_user')||'{}');
+var empImg='https://i.pravatar.cc/100?img=32';
+document.getElementById('userInfo').innerHTML=`<div style="display:flex;align-items:center;gap:8px"><img src="${empImg}" style="width:32px;height:32px;border-radius:50%;border:2px solid #16a34a"><span>${cur.email||'employee@test.com'} (EMPLOYEE)</span></div>`;
+var empAvatar=document.getElementById('empAvatar'); var empNameEl=document.getElementById('empName');
+if(empAvatar){ empAvatar.src='https://i.pravatar.cc/100?img=32'; empNameEl.textContent=cur.name||'Employee'; document.getElementById('topEmpName').textContent=cur.name||'Employee'; document.getElementById('welcomeTitle').textContent=`Welcome ${cur.name||'Employee'}! 👋`; }
+loadDash(); loadProfile();
+document.getElementById('attMonth').value=new Date().toISOString().slice(0,7);
+document.getElementById('startDate').valueAsDate=new Date();
+document.getElementById('endDate').valueAsDate=new Date();
+</script>
+</body>
+</html>

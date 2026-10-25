@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - HCM Lite</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"@supabase/supabase-js":"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"}}</script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:#f8fafc;display:flex}
+.sidebar{width:270px;background:#0f172a;color:#fff;min-height:100vh;padding:20px;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:10;overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-bottom:10px}
+.logo-icon{width:36px;height:36px;background:#2563eb;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900}
+.nav{display:flex;flex-direction:column;gap:5px;flex:1}
+.nav button{width:100%;text-align:left;padding:11px 13px;border:0;border-radius:10px;background:transparent;color:#94a3b8;cursor:pointer;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:10px;transition:0.2s}
+.nav button.active{background:#1e293b;color:#fff;border-left:3px solid #2563eb}
+.nav button:hover{background:#1e293b;color:#fff}
+.content{margin-left:270px;flex:1;padding:28px;min-height:100vh}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px}
+.stat h3{margin:0;font-size:12px;color:#64748b;text-transform:uppercase}.stat .num{font-size:24px;font-weight:800;margin-top:4px}
+.tab{display:none}.tab.active{display:block;animation:fade 0.2s}@keyframes fade{from{opacity:0}to{opacity:1}}
+input,select,textarea{padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;background:#f8fafc;outline:none;width:100%;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:#2563eb;background:#fff}
+.btn{padding:10px 16px;border:0;border-radius:10px;background:#1e3a8a;color:#fff;font-weight:700;cursor:pointer}.btn-sm{padding:6px 10px;font-size:12px}.btn-green{background:#16a34a}.btn-red{background:#dc2626}
+table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:13px}th{color:#64748b;font-size:11px;text-transform:uppercase}
+.badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}.badge-active{background:#dcfce7;color:#166534}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:1000px){.sidebar{width:100%;position:relative;min-height:auto}.content{margin-left:0}.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+<div class="logo"><div class="logo-icon">A</div> HCM Lite - ADMIN</div>
+
+<div style="text-align:center;margin:10px 0 20px 0">
+<div style="width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto;border:3px solid #2563eb;box-shadow:0 4px 12px rgba(0,0,0,0.2)">
+<img id="adminAvatar" src="https://i.pravatar.cc/100?img=8" style="width:100%;height:100%;object-fit:cover">
+</div>
+<div id="adminName" style="margin-top:8px;font-size:13px;font-weight:700;color:#fff">Admin</div>
+<div style="font-size:11px;color:#94a3b8">Administrator</div>
+</div>
+
+<div class="nav">
+<button data-tab="dashboard" class="active">📊 Dashboard</button>
+<button data-tab="company">🏢 Company Setup</button>
+<button data-tab="departments">🏬 Departments</button>
+<button data-tab="designations">💼 Designations</button>
+<button data-tab="leavetypes">🌴 Leave Types</button>
+<button data-tab="createhr">👤 Create HR</button>
+<button data-tab="employees">👥 Employees</button>
+<button data-tab="ai">🤖 AI Assistant</button>
+<button id="logoutBtn" style="margin-top:auto;color:#f87171">🚪 Logout</button>
+</div>
+</div>
+
+<div class="content">
+<div class="header"><h2 id="pageTitle">Dashboard</h2><div id="userInfo" style="font-size:12px;color:#64748b;background:#fff;padding:6px 12px;border-radius:20px;border:1px solid #e2e8f0"></div></div>
+
+<div id="tab-dashboard" class="tab active">
+<div class="stats">
+<div class="stat"><h3>Company</h3><div class="num" id="statCompany">1</div></div>
+<div class="stat"><h3>HR Users</h3><div class="num" id="statHR">0</div></div>
+<div class="stat"><h3>Employees</h3><div class="num" id="statEmp">0</div></div>
+<div class="stat"><h3>Departments</h3><div class="num" id="statDept">0</div></div>
+</div>
+<div class="card"><h3>Welcome Admin! 👋</h3><p style="color:#64748b;font-size:14px">Har option left se click pe khulega - Company, Departments, etc.</p><div id="recentActivity"></div></div>
+</div>
+
+<div id="tab-company" class="tab">
+<div class="card"><h3>🏢 Company Setup</h3>
+<div class="grid2" style="margin-top:14px">
+<div><label>Company Name</label><input id="compName" value="HCM Lite Company"></div>
+<div><label>Email</label><input id="compEmail" value="admin@hcmlite.com"></div>
+<div><label>Phone</label><input id="compPhone" value="0300-1234567"></div>
+<div><label>Address</label><input id="compAddress" value="Karachi, Pakistan"></div>
+</div>
+<label style="margin-top:12px;display:block">About</label><textarea id="compAbout" rows="3">Best HR Management System</textarea>
+<button class="btn" style="margin-top:14px" id="saveCompany">Save Company</button>
+<div id="compMsg" style="margin-top:10px;font-size:13px"></div>
+</div>
+</div>
+
+<div id="tab-departments" class="tab">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><h3>🏬 Departments - Click pe data ayega</h3><div style="display:flex;gap:8px"><input id="deptName" placeholder="New dept name"><button class="btn" id="addDept">+ Add</button></div></div>
+<div id="deptList" style="margin-top:14px"></div>
+</div>
+</div>
+
+<div id="tab-designations" class="tab">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><h3>💼 Designations</h3><div style="display:flex;gap:8px"><input id="desigName" placeholder="New designation"><button class="btn" id="addDesig">+ Add</button></div></div>
+<div id="desigList" style="margin-top:14px"></div>
+</div>
+</div>
+
+<div id="tab-leavetypes" class="tab">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><h3>🌴 Leave Types</h3><div style="display:flex;gap:8px"><input id="leaveTypeName" placeholder="Sick, Casual etc"><input id="leaveDays" type="number" placeholder="Days" style="width:80px"><button class="btn" id="addLeaveType">+ Add</button></div></div>
+<div id="leaveTypeList" style="margin-top:14px"></div>
+</div>
+</div>
+
+<div id="tab-createhr" class="tab">
+<div class="card"><h3>👤 Create HR User</h3>
+<div class="grid2" style="margin-top:12px">
+<div><label>Full Name</label><input id="hrName" placeholder="HR Name"></div>
+<div><label>Email</label><input id="hrEmail" placeholder="hr@test.com"></div>
+<div><label>Password</label><input id="hrPass" type="password" value="123456"></div>
+<div><label>Department</label><select id="hrDept"><option>HR</option><option>IT</option></select></div>
+</div>
+<button class="btn" style="margin-top:14px" id="createHRBtn">Create HR</button><div id="hrMsg" style="margin-top:10px;font-size:13px"></div>
+<div id="hrList" style="margin-top:20px"></div>
+</div>
+</div>
+
+<div id="tab-employees" class="tab">
+<div class="card"><h3>👥 All Employees</h3><input id="searchEmp" placeholder="Search..." style="margin:10px 0"><div style="overflow:auto"><table><thead><tr><th>Name</th><th>Email</th><th>Dept</th><th>Status</th></tr></thead><tbody id="empTable"></tbody></table></div></div>
+</div>
+
+<div id="tab-ai" class="tab">
+<div class="card"><h3>🤖 AI Assistant - Admin</h3><div id="aiChat" style="height:350px;overflow:auto;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:12px 0;background:#f8fafc"></div><div style="display:flex;gap:8px"><input id="aiInput" style="flex:1" placeholder="Ask: Create HR, Setup company..."><button class="btn" id="aiSend">Send</button></div></div>
+</div>
+
+</div>
+
+<script type="module">
+import { createClient } from '@supabase/supabase-js';
+const supabase = createClient('https://jzwgaebssxvqiebbcjju.supabase.co','ANON_KEY_HERE');
+
+function getDepts(){ let d=JSON.parse(localStorage.getItem('hcm_depts')||'[]'); if(d.length===0){ d=[{id:'1',name:'IT'},{id:'2',name:'HR'},{id:'3',name:'Finance'}]; localStorage.setItem('hcm_depts',JSON.stringify(d)); } return d; }
+function getDesigs(){ let d=JSON.parse(localStorage.getItem('hcm_desigs')||'[]'); if(d.length===0){ d=[{id:'1',name:'Manager'},{id:'2',name:'Developer'},{id:'3',name:'HR Executive'}]; localStorage.setItem('hcm_desigs',JSON.stringify(d)); } return d; }
+function getLeaveTypes(){ let d=JSON.parse(localStorage.getItem('hcm_leavetypes')||'[]'); if(d.length===0){ d=[{id:'1',name:'Sick',days:12},{id:'2',name:'Casual',days:10},{id:'3',name:'Annual',days:20}]; localStorage.setItem('hcm_leavetypes',JSON.stringify(d)); } return d; }
+function getEmps(){ return JSON.parse(localStorage.getItem('hcm_employees')||'[]'); }
+function getHRs(){ return JSON.parse(localStorage.getItem('hcm_lite_users')||'[]').filter(u=>u.role==='hr'); }
+
+// TABS - SAB CLICK PE KHULENGE - YEHI FIX HAI
+const tabs = document.querySelectorAll('.nav button[data-tab]');
+const contents = document.querySelectorAll('.tab');
+const title = document.getElementById('pageTitle');
+
+function openTab(name){
+  console.log('Admin tab clicked:', name);
+  tabs.forEach(b=>b.classList.remove('active'));
+  contents.forEach(c=>c.classList.remove('active'));
+  var btn = document.querySelector(`[data-tab="${name}"]`);
+  var tab = document.getElementById(`tab-${name}`);
+  if(btn) btn.classList.add('active');
+  if(tab) tab.classList.add('active');
+  if(title) title.textContent = name.charAt(0).toUpperCase()+name.slice(1);
+  
+  if(name==='dashboard') loadDash();
+  if(name==='departments') loadDepts();
+  if(name==='designations') loadDesigs();
+  if(name==='leavetypes') loadLeaveTypes();
+  if(name==='createhr') loadHRs();
+  if(name==='employees') loadEmps();
+  if(name==='company') loadCompany();
+}
+
+tabs.forEach(b=>{
+  b.addEventListener('click', function(){
+    var tabName = this.getAttribute('data-tab');
+    openTab(tabName);
+  });
+});
+
+// LOGOUT
+document.getElementById('logoutBtn').addEventListener('click', async function(){
+  if(confirm('Admin logout karna hai?')){
+    try{ await supabase.auth.signOut(); }catch(e){}
+    localStorage.removeItem('hcm_current_user');
+    localStorage.removeItem('hcm_signup_done');
+    window.location.href='login.html';
+  }
+});
+
+function loadDash(){
+  document.getElementById('statCompany').textContent='1';
+  document.getElementById('statHR').textContent=getHRs().length;
+  document.getElementById('statEmp').textContent=getEmps().length;
+  document.getElementById('statDept').textContent=getDepts().length;
+  document.getElementById('recentActivity').innerHTML=`<div style="margin-top:12px;font-size:13px;color:#64748b">Company: ${localStorage.getItem('hcm_company_name')||'HCM Lite'}<br>Departments: ${getDepts().map(d=>d.name).join(', ')}<br>HR Users: ${getHRs().length}</div>`;
+}
+function loadCompany(){ document.getElementById('compName').value=localStorage.getItem('hcm_company_name')||'HCM Lite Company'; }
+function loadDepts(){ var depts=getDepts(); document.getElementById('deptList').innerHTML=depts.map(d=>`<div style="padding:10px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;display:flex;justify-content:space-between"><span><b>${d.name}</b></span><button class="btn btn-sm btn-red" onclick="delDept('${d.id}')">Delete</button></div>`).join('') || 'No departments - Add karo'; }
+function loadDesigs(){ var des=getDesigs(); document.getElementById('desigList').innerHTML=des.map(d=>`<div style="padding:10px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;display:flex;justify-content:space-between"><span>${d.name}</span><button class="btn btn-sm btn-red" onclick="delDesig('${d.id}')">Delete</button></div>`).join(''); }
+function loadLeaveTypes(){ var lts=getLeaveTypes(); document.getElementById('leaveTypeList').innerHTML=lts.map(l=>`<div style="padding:10px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;display:flex;justify-content:space-between"><span><b>${l.name}</b> - ${l.days} days</span><button class="btn btn-sm btn-red" onclick="delLT('${l.id}')">Delete</button></div>`).join(''); }
+function loadHRs(){ var hrs=getHRs(); document.getElementById('hrList').innerHTML = hrs.length ? `<h4 style="margin:16px 0 8px">Existing HR Users:</h4>`+hrs.map(h=>`<div style="padding:8px;border-bottom:1px solid #eee;display:flex;justify-content:space-between"><span>${h.name} - ${h.email}</span><span class="badge badge-active">${h.role}</span></div>`).join('') : 'No HR yet - Create karo'; }
+function loadEmps(){ var emps=getEmps(); var q=document.getElementById('searchEmp').value.toLowerCase(); var filtered=emps.filter(e=>e.full_name.toLowerCase().includes(q)); document.getElementById('empTable').innerHTML=filtered.map(e=>`<tr><td>${e.full_name}</td><td>${e.email}</td><td>${e.department_id}</td><td><span class="badge badge-active">${e.status}</span></td></tr>`).join('') || '<tr><td colspan=4>No employees</td></tr>'; }
+window.delDept=function(id){ if(!confirm('Delete?'))return; var d=getDepts().filter(x=>x.id!==id); localStorage.setItem('hcm_depts',JSON.stringify(d)); loadDepts(); loadDash(); }
+window.delDesig=function(id){ var d=getDesigs().filter(x=>x.id!==id); localStorage.setItem('hcm_desigs',JSON.stringify(d)); loadDesigs(); }
+window.delLT=function(id){ var d=getLeaveTypes().filter(x=>x.id!==id); localStorage.setItem('hcm_leavetypes',JSON.stringify(d)); loadLeaveTypes(); }
+
+document.getElementById('saveCompany').addEventListener('click', function(){ localStorage.setItem('hcm_company_name', document.getElementById('compName').value); document.getElementById('compMsg').textContent='✓ Company saved!'; setTimeout(()=>document.getElementById('compMsg').textContent='',2000); });
+document.getElementById('addDept').addEventListener('click', function(){ var name=document.getElementById('deptName').value.trim(); if(!name)return; var depts=getDepts(); depts.push({id:Date.now().toString(), name:name}); localStorage.setItem('hcm_depts',JSON.stringify(depts)); document.getElementById('deptName').value=''; loadDepts(); loadDash(); });
+document.getElementById('addDesig').addEventListener('click', function(){ var name=document.getElementById('desigName').value.trim(); if(!name)return; var des=getDesigs(); des.push({id:Date.now().toString(), name:name}); localStorage.setItem('hcm_desigs',JSON.stringify(des)); document.getElementById('desigName').value=''; loadDesigs(); });
+document.getElementById('addLeaveType').addEventListener('click', function(){ var name=document.getElementById('leaveTypeName').value.trim(); var days=document.getElementById('leaveDays').value; if(!name)return; var lts=getLeaveTypes(); lts.push({id:Date.now().toString(), name:name, days:days||10}); localStorage.setItem('hcm_leavetypes',JSON.stringify(lts)); document.getElementById('leaveTypeName').value=''; document.getElementById('leaveDays').value=''; loadLeaveTypes(); });
+document.getElementById('createHRBtn').addEventListener('click', function(){ var name=document.getElementById('hrName').value.trim(); var email=document.getElementById('hrEmail').value.trim(); var pass=document.getElementById('hrPass').value; if(!name||!email||!pass){ document.getElementById('hrMsg').textContent='All fields required'; return; } var users=JSON.parse(localStorage.getItem('hcm_lite_users')||'[]'); if(users.find(u=>u.email===email)){ document.getElementById('hrMsg').textContent='Email already exists'; return; } users.push({name:name,email:email,password:pass,role:'hr',img:'https://i.pravatar.cc/100?img=12'}); localStorage.setItem('hcm_lite_users',JSON.stringify(users)); document.getElementById('hrMsg').textContent='✓ HR Created! '+email+' can now login as HR'; document.getElementById('hrName').value=''; document.getElementById('hrEmail').value=''; loadHRs(); loadDash(); });
+document.getElementById('searchEmp').addEventListener('input', loadEmps);
+document.getElementById('aiSend').addEventListener('click', function(){ var q=document.getElementById('aiInput').value; if(!q)return; var chat=document.getElementById('aiChat'); chat.innerHTML+=`<div style="text-align:right;margin:6px 0"><span style="background:#1e3a8a;color:#fff;padding:8px 12px;border-radius:12px;display:inline-block">${q}</span></div>`; document.getElementById('aiInput').value=''; var ans=`Admin data: ${getEmps().length} employees, ${getDepts().length} departments, ${getHRs().length} HR users.`; setTimeout(()=>{ chat.innerHTML+=`<div style="margin:6px 0"><span style="background:#fff;border:1px solid #e2e8f0;padding:8px 12px;border-radius:12px;display:inline-block"><b>AI:</b> ${ans}</span></div>`; chat.scrollTop=chat.scrollHeight; },400); });
+
+// INIT - ADMIN PIC + CLICK FIX
+var cur=JSON.parse(localStorage.getItem('hcm_current_user')||'{}');
+var adminImg = cur.role==='admin' ? 'https://i.pravatar.cc/100?img=8' : cur.role==='hr' ? 'https://i.pravatar.cc/100?img=12' : 'https://i.pravatar.cc/100?img=32';
+document.getElementById('userInfo').innerHTML = `<div style="display:flex;align-items:center;gap:8px"><img src="${adminImg}" style="width:32px;height:32px;border-radius:50%;border:2px solid #2563eb"><span>${cur.email||'Admin'} (ADMIN)</span></div>`;
+
+var adminAvatar = document.getElementById('adminAvatar');
+var adminNameEl = document.getElementById('adminName');
+// ADMIN PANEL ME HAMESHA ADMIN KI PIC AYEGI
+if(adminAvatar){
+  adminAvatar.src='https://i.pravatar.cc/100?img=8'; // Admin boy
+  adminNameEl.textContent='Admin';
+}
+
+loadDash();
+loadCompany();
+console.log('Admin Panel Loaded - All clicks will work now');
+</script>
+</body>
+</html>
